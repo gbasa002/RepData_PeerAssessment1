@@ -8,7 +8,6 @@ Since the file contains comma separated values (csv), **read.csv()** function is
 We would like to have the data in a long form, where observations are represented by a row and each column has a meaningful name. It is useful to use **head()**, **dim()** and **names()** functions to understand the basics of the dataset.
 
 ```{r Load Data, echo=TRUE}
-        unzip(zipfile="activity.zip")
         myDataset <- read.csv("activity.csv")
         head (myDataset)
         names (myDataset)
