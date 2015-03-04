@@ -57,10 +57,8 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <div id="loading-and-preprocessing-the-data" class="section level3">
 <h3>Loading and preprocessing the data</h3>
 <p>Here’s how to load the dataset into R, and to check if there is any necessary transformation needed. Since the file contains comma separated values (csv), <strong>read.csv()</strong> function is used. We would like to have the data in a long form, where observations are represented by a row and each column has a meaningful name. It is useful to use <strong>head()</strong>, <strong>dim()</strong> and <strong>names()</strong> functions to understand the basics of the dataset.</p>
-<pre class="r"><code>        unzip(zipfile=&quot;activity.zip&quot;)</code></pre>
-<pre><code>## Warning in unzip(zipfile = &quot;activity.zip&quot;): error 1 in extracting from zip
-## file</code></pre>
-<pre class="r"><code>        myDataset &lt;- read.csv(&quot;activity.csv&quot;)
+<pre class="r"><code>        unzip(zipfile=&quot;activity.zip&quot;)
+        myDataset &lt;- read.csv(&quot;activity.csv&quot;)
         head (myDataset)</code></pre>
 <pre><code>##   steps       date interval
 ## 1    NA 2012-10-01        0

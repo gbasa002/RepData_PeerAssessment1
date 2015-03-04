@@ -10,14 +10,6 @@ We would like to have the data in a long form, where observations are represente
 
 ```r
         unzip(zipfile="activity.zip")
-```
-
-```
-## Warning in unzip(zipfile = "activity.zip"): error 1 in extracting from zip
-## file
-```
-
-```r
         myDataset <- read.csv("activity.csv")
         head (myDataset)
 ```
