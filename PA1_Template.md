@@ -7,10 +7,37 @@ Here's how to load the dataset into R, and to check if there is any necessary tr
 Since the file contains comma separated values (csv), **read.csv()** function is used. 
 We would like to have the data in a long form, where observations are represented by a row and each column has a meaningful name. It is useful to use **head()**, **dim()** and **names()** functions to understand the basics of the dataset.
 
-```{r Load Data, echo=TRUE}
+
+```r
+        unzip(zipfile="activity.zip")
+```
+
+```
+## Warning in unzip(zipfile = "activity.zip"): error 1 in extracting from zip
+## file
+```
+
+```r
         myDataset <- read.csv("activity.csv")
         head (myDataset)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
+```
+
+```r
         names (myDataset)
+```
+
+```
+## [1] "steps"    "date"     "interval"
 ```
 
 From the output of the code above, we can conclude that the data is in the long format and it has meaningful column names. One important feature of the dataset that should be noted is that missing values are coded as "NA". Therefore, any further calculation may require the removal of these NA values.
@@ -36,7 +63,8 @@ Instead month label and the day is used for each day.
         
         * The day and month are pasted together to appear in the row names with __paste()__ function.
 
-```{r Dataset Conversion&Subsetting, echo=TRUE, warning = FALSE}
+
+```r
         library (lubridate)      
         myDataset$date <- ymd(myDataset$date)
         myDataset_NArm <- myDataset [which (myDataset$steps != "NA"), ]
@@ -44,6 +72,63 @@ Instead month label and the day is used for each day.
         colnames(mySum) <- "Total Number of Steps Per Day"
         rownames(mySum) <- unique(paste (month (myDataset_NArm$date, label = TRUE) , day (myDataset_NArm$date)))        
         mySum 
+```
+
+```
+##        Total Number of Steps Per Day
+## Oct 2                            126
+## Oct 3                          11352
+## Oct 4                          12116
+## Oct 5                          13294
+## Oct 6                          15420
+## Oct 7                          11015
+## Oct 9                          12811
+## Oct 10                          9900
+## Oct 11                         10304
+## Oct 12                         17382
+## Oct 13                         12426
+## Oct 14                         15098
+## Oct 15                         10139
+## Oct 16                         15084
+## Oct 17                         13452
+## Oct 18                         10056
+## Oct 19                         11829
+## Oct 20                         10395
+## Oct 21                          8821
+## Oct 22                         13460
+## Oct 23                          8918
+## Oct 24                          8355
+## Oct 25                          2492
+## Oct 26                          6778
+## Oct 27                         10119
+## Oct 28                         11458
+## Oct 29                          5018
+## Oct 30                          9819
+## Oct 31                         15414
+## Nov 2                          10600
+## Nov 3                          10571
+## Nov 5                          10439
+## Nov 6                           8334
+## Nov 7                          12883
+## Nov 8                           3219
+## Nov 11                         12608
+## Nov 12                         10765
+## Nov 13                          7336
+## Nov 15                            41
+## Nov 16                          5441
+## Nov 17                         14339
+## Nov 18                         15110
+## Nov 19                          8841
+## Nov 20                          4472
+## Nov 21                         12787
+## Nov 22                         20427
+## Nov 23                         21194
+## Nov 24                         14478
+## Nov 25                         11834
+## Nov 26                         11162
+## Nov 27                         13646
+## Nov 28                         10183
+## Nov 29                          7047
 ```
 
 #### Step 2: Make a histogram of total number of steps taken in each day
@@ -73,7 +158,8 @@ For more information on charts, please visit [Bar Charts and Histograms](http://
 
 Now, we can draw a histogram of number of steps taken each day. In order to plot the histogram, we will use **ggplot()** function in **ggplot2** package. Make sure that ggplot2 package is installed and library is included. To install the package, use **install.packages()** function. 
 
-``` {r Histogram, echo = TRUE, warning = FALSE}    
+
+```r
         library (ggplot2)
         ggplot (data = mySum, aes (x = mySum[[1]])) +
                 geom_bar(binwidth = 1000, fill = "firebrick4", color = "dodgerblue2") +
@@ -81,13 +167,27 @@ Now, we can draw a histogram of number of steps taken each day. In order to plot
                 ggtitle ("Histogram of Total Number of Steps Taken Per Day")
 ```
 
+![](./PA1_Template_files/figure-html/Histogram-1.png) 
+
 #### Step 3: Calculate and report the mean and median of the total number of steps taken per day
 
 In order to calculate the mean and median of the total number of steps taken per day, we use simple functions **mean()** and **median()** respectively. 
 
-```{r Mean and Median, echo=TRUE, warning=FALSE}
+
+```r
         mean (mySum[[1]])
+```
+
+```
+## [1] 10766.19
+```
+
+```r
         median (mySum[[1]])
+```
+
+```
+## [1] 10765
 ```
 
 ### What is the average daily activity pattern?
@@ -96,28 +196,37 @@ In order to calculate the mean and median of the total number of steps taken per
 
 To be able to plot the time series, we need to average the data required for the time series. First, we need to use **sapply()** function to apply **mean()** function across steps over each interval. 
 
-``` {r Averaging the data, echo = TRUE, warning = FALSE}
+
+```r
         myAverages <- data.frame(sapply (split (myDataset_NArm$steps, myDataset_NArm$interval),mean))
         colnames(myAverages)<- c("Averages")
 ```
 
 Now, we can plot the time series data by using basic **plot()** function. 
 
-``` {r Plotting, echo=TRUE}
+
+```r
         plot (unique (myDataset_NArm$interval), myAverages[[1]], xlab = "Time Intervals", ylab = "Average Number of Steps Taken", 
               type = "l",main ="Time Series of Average Number of Steps Taken per Interval")     
 ```
+
+![](./PA1_Template_files/figure-html/Plotting-1.png) 
 
 #### Step 2: Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 In order to find the interval containing maximum number of steps across all the days, first we added the corresponding time intervals to each average in *myAverages* dataframe with **mutate()** function from **plyr** package. Then we should order the data frame based on averages in a descending manner to get the highest average steps on top. Corresponding time interval to the maximum number can be retrieved from the second column of the same row. 
 
-``` {r Find maximum, echo=TRUE, warning=FALSE, message=FALSE}
+
+```r
         library (dplyr)
         myAverages <- mutate (myAverages, Intervals = rownames (myAverages))
         myAverages_Sorted <- myAverages [ with (myAverages, order (-Averages)),]
         interval_of_max <- myAverages_Sorted [1,2]
         interval_of_max
+```
+
+```
+## [1] "835"
 ```
 
 So we can conclude that 835 - 840 time interval has the maximum number of averaged steps across all days. 
@@ -128,17 +237,23 @@ So we can conclude that 835 - 840 time interval has the maximum number of averag
 
 To calculate the number of rows with missing values, **complete.cases()** function is used. 
 
-```{r Calculate complete cases versus NAs, echo=TRUE, warning=FALSE}
+
+```r
         missing <- !complete.cases (myDataset)
         num_missing <- sum(missing)
         num_missing 
+```
+
+```
+## [1] 2304
 ```
 
 #### Step 2&3: Devise a strategy for filling in all of the missing values in the dataset and create a new dataset with imputed data
 
 In the strategy to fill the missing values, we can use average step data belonging to the specific time interval across all days. We calculated these values earlier in *myAverages()* dataframe. The new imputed dataset is stored into a new dataset called *myDataset_Imputed*
 
-```{r Filling missing data, echo=TRUE, warning=FALSE}
+
+```r
         myDataset_Imputed <- myDataset
         for (i in 1:nrow(myDataset_Imputed)){
               if (is.na(myDataset_Imputed[i,1])){
@@ -154,30 +269,45 @@ In the strategy to fill the missing values, we can use average step data belongi
 
 First, we need to calculate the total number of steps taken each day.
 
-```{r, echo = TRUE}
+
+```r
         mySum_Imputed <- data.frame (sapply(split(myDataset_Imputed$steps, myDataset_Imputed$date), sum))
         colnames(mySum_Imputed) <- "Total Number of Steps Per Day"
         rownames(mySum_Imputed) <- unique(paste (month (myDataset_Imputed$date, label = TRUE) , day (myDataset_Imputed$date)))        
-```        
+```
         
         
 Now we can make the histogram over imputed dataset. 
 
-```{r, echo=TRUE}
+
+```r
         ggplot (data = mySum_Imputed, aes (x = mySum_Imputed[[1]])) +
                 geom_bar(binwidth = 1000, fill = "firebrick4", color = "dodgerblue2") +
                 labs (x = "Total Number of Steps Taken Per Day", y = "Frequency") +
                 ggtitle ("Histogram of Total Number of Steps Taken Per Day - Imputed Dataset")
-
 ```
+
+![](./PA1_Template_files/figure-html/unnamed-chunk-2-1.png) 
 
 
 Now, mean and median for the imputed data can be calculated as follows: 
 
 
-```{r Mean and Median Imputed, echo=TRUE, warning=FALSE}
+
+```r
         mean (mySum_Imputed[[1]])
+```
+
+```
+## [1] 10766.19
+```
+
+```r
         median (mySum_Imputed[[1]])
+```
+
+```
+## [1] 10766.19
 ```
 
 
@@ -189,7 +319,8 @@ As you can compare, the values slightly differ from the values found before. One
 
 In order to create the two level factor variable indicating weekday versus weekend, first, we add a new column indicating the day of the date. Then we add another column with **mutate()** and this column indicates whether it is a weekday or not. In **wday()** function under **lubridate()** package, 1 indicates Sundays and 6 indicates Saturdays. Therefore, **ifelse()** statement is used to differentiate the days. Later, the column is converted into factors by using **as.factor()**.
 
-```{r}
+
+```r
         myDataset_Imputed <- mutate (myDataset_Imputed, DayLabel = wday(myDataset_Imputed$date))        
         myDataset_Imputed <- mutate (myDataset_Imputed, FactorLevel = ifelse(DayLabel == 6 | DayLabel == 1, "weekend", "weekday"))
         myDataset_Imputed$FactorLevel <- as.factor(myDataset_Imputed$FactorLevel)
@@ -199,10 +330,10 @@ In order to create the two level factor variable indicating weekday versus weeke
 
 First, we should separate *myDataset_Imputed* into two: *myWDayData* and *myWEndData* in order to compute the averages across days easily. Then, averages are created with **sapply()** function. 
 
-```{r Panel Plot, echo=TRUE, warning=FALSE}
+
+```r
         myWDayData <- myDataset_Imputed [which (myDataset_Imputed$FactorLevel == "weekday"),]
         myWEndData <- myDataset_Imputed [which (myDataset_Imputed$FactorLevel == "weekend"),]        
-
 
         myAverages_Wdays <- data.frame(sapply (split (myWDayData$steps, myWDayData$interval),mean))
         colnames (myAverages_Wdays) <- c("Averages")
@@ -217,21 +348,27 @@ First, we should separate *myDataset_Imputed* into two: *myWDayData* and *myWEnd
 
 After creating the separate average datasets, they need to be combined into one by **rbind()** function so that for plotting, we can use **xyplot()** function over *Factor* levels that we defined. 
 
-```{r, echo=TRUE}
+
+```r
         myAverages_All <- rbind (myAverages_Wends, myAverages_Wdays)
         myAverages_All$Factor <- as.factor (myAverages_All$Factor)
 ```
 
 Now, we are ready to plot the requested graph. In order to be able to plot, please make sure to install add **lattice** library. 
 
-```{r, echo =TRUE}
+
+```r
         library(lattice)
         attach (myAverages_All)
         xyplot(Averages~Interval|Factor,type="l", main = "Weekday vs. Weekend Step Averages by Interval", layout=(c(1,2)))
 ```
 
+![](./PA1_Template_files/figure-html/unnamed-chunk-5-1.png) 
+
 ###Remarks
 This is the end of the PA1 - Coursera Reproducible Research -Data Science Specialization Track.
 This RMarkdown file is authored by Gulsevi Basar. 
+
+
 
 

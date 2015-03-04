@@ -1,3 +1,9 @@
+---
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: yes
+---
 Reproducible Research - Project 1
 =========================================
 
@@ -234,5 +240,7 @@ Now, we are ready to plot the requested graph. In order to be able to plot, plea
 ###Remarks
 This is the end of the PA1 - Coursera Reproducible Research -Data Science Specialization Track.
 This RMarkdown file is authored by Gulsevi Basar. 
+
+
 
 
